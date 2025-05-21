@@ -14,18 +14,20 @@
 		<div class="top-bar">
 			<div class="controls">
 				<div class="search-controls">
+					<label style="font-size: 18px">楓之谷 Artale 怪物掉落查詢工具</label>
 					<input type="text" id="search" placeholder="搜尋怪物或掉落物..." />
+					<div id="search-suggestions" class="search-suggestions" style="display: none"></div>
 					<button class="toggle-regions-btn" onclick="toggleRegions()">顯示區域選擇</button>
 					<label>等級：<input type="number" id="min-lv" style="width: 70px" placeholder="最小" /></label>
 					<label>~</label>
 					<label><input type="number" id="max-lv" style="width: 70px" placeholder="最大" /></label>
 					<label><input type="checkbox" id="toggle-filtered" /> 只顯示符合的掉落</label>
 					<label><input type="checkbox" id="toggle-name-hover" /> 只顯示掉落物圖片</label>
-					<button id="share-btn" style="padding: 0.2em 0.5em; border-radius: 5px; border: 1px solid #42aaff; background: #222; color: #42aaff; cursor: pointer">分享</button>
+					<button id="share-btn" class="share-btn">分享</button>
 				</div>
 				<div class="region-controls">
-					<button class="toggle-all-btn" onclick="toggleAllRegions()" style="margin-right: 1em; padding: 0.2em 0.5em; border-radius: 4px; border: 1px solid #666; background: #333; color: #ddd; cursor: pointer; font-size: 0.9em">全選區域</button>
-					<button class="toggle-default-btn" onclick="selectDefaultRegions()" style="margin-right: 1em; padding: 0.2em 0.5em; border-radius: 4px; border: 1px solid #666; background: #333; color: #ddd; cursor: pointer; font-size: 0.9em">選擇已開放區域</button>
+					<button class="toggle-all-btn" onclick="toggleAllRegions()">全選區域</button>
+					<button class="toggle-default-btn" onclick="selectDefaultRegions()">選擇已開放區域</button>
 					<span id="region-checkboxes"></span>
 				</div>
 			</div>
