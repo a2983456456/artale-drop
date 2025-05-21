@@ -33,15 +33,24 @@ function renderSuggestionList(groups) {
 	let idx = 0;
 	const sections = [];
 	if (groups.monsters.length) {
-		sections.push(`<div class="suggestion-section">怪物</div>` + groups.monsters.map((name, i) => `<div class="suggestion-item${idx === suggestionIndex ? ' active' : ''}" data-value="${name}" data-type="monster">${name}</div>`).join(''));
+		sections.push(
+			`<div class="suggestion-section">怪物</div>` +
+				groups.monsters.map((name, i) => `<div class="suggestion-item${idx === suggestionIndex ? ' active' : ''}" data-value="${name}" data-type="monster">${name}</div>`).join('')
+		);
 		idx += groups.monsters.length;
 	}
 	if (groups.equips.length) {
-		sections.push(`<div class="suggestion-section">裝備</div>` + groups.equips.map((name, i) => `<div class="suggestion-item${idx === suggestionIndex ? ' active' : ''}" data-value="${name}" data-type="equip">${name}</div>`).join(''));
+		sections.push(
+			`<div class="suggestion-section">裝備</div>` +
+				groups.equips.map((name, i) => `<div class="suggestion-item${idx === suggestionIndex ? ' active' : ''}" data-value="${name}" data-type="equip">${name}</div>`).join('')
+		);
 		idx += groups.equips.length;
 	}
 	if (groups.others.length) {
-		sections.push(`<div class="suggestion-section">其他</div>` + groups.others.map((name, i) => `<div class="suggestion-item${idx === suggestionIndex ? ' active' : ''}" data-value="${name}" data-type="other">${name}</div>`).join(''));
+		sections.push(
+			`<div class="suggestion-section">其他</div>` +
+				groups.others.map((name, i) => `<div class="suggestion-item${idx === suggestionIndex ? ' active' : ''}" data-value="${name}" data-type="other">${name}</div>`).join('')
+		);
 		idx += groups.others.length;
 	}
 	html = sections.join('');
@@ -381,7 +390,15 @@ function refresh() {
 	renderCards(filteredDrop, keyword, onlyMatchedDrops);
 }
 
-Promise.all([fetch('drop_data.json').then((res) => res.json()), fetch('mob.json').then((res) => res.json()), fetch('item.json').then((res) => res.json()), fetch('boss_time.json').then((res) => res.json()), fetch('map.json').then((res) => res.json()), fetch('map_exception.json').then((res) => res.json()), fetch('area.json').then((res) => res.json())])
+Promise.all([
+	fetch('drop_data.json').then((res) => res.json()),
+	fetch('mob.json').then((res) => res.json()),
+	fetch('item.json').then((res) => res.json()),
+	fetch('boss_time.json').then((res) => res.json()),
+	fetch('map.json').then((res) => res.json()),
+	fetch('map_exception.json').then((res) => res.json()),
+	fetch('area.json').then((res) => res.json())
+])
 	.then(([drop, mob, itemMap, boss, map, mapException, areaData]) => {
 		spawnMap = {};
 		area = areaData; // 儲存 area 資料到全域變數
