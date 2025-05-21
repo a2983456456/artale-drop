@@ -1,0 +1,228 @@
+body {
+  font-family: sans-serif;
+  background: #1e1e1e;
+  color: #ddd;
+  margin: 0;
+}
+.disclaimer {
+  background-color: #2b2b2b;
+  color: #aaa;
+  padding: 1em;
+  font-size: 0.9em;
+  text-align: center;
+  border-bottom: 1px solid #444;
+}
+.disclaimer a {
+  color: #ccc;
+  text-decoration: underline;
+}
+.top-bar {
+  position: sticky;
+  top: 0;
+  background-color: #1e1e1e;
+  z-index: 100;
+  padding: 1em 2em 0 2em;
+  border-bottom: 1px solid #333;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+.search-controls {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  width: 100%;
+  font-size: 0.9em;
+}
+.search-controls input[type="text"] {
+  font-size: inherit;
+}
+.search-controls input[type="number"] {
+  font-size: inherit;
+}
+.search-controls button {
+  font-size: inherit;
+}
+.region-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  width: 100%;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+}
+.region-controls.show {
+  max-height: 200px;
+  padding: 0.5em 0;
+}
+#region-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(80px, 1fr));
+  gap: 0.5em;
+  width: 100%;
+}
+#region-checkboxes label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toggle-regions-btn {
+  padding: 0.3em 0.8em;
+  border-radius: 5px;
+  border: 1px solid #666;
+  background: #333;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.2s;
+}
+.toggle-regions-btn:hover {
+  background: #444;
+}
+input[type="text"] {
+  width: 150px;
+  padding: 0.5em;
+  border-radius: 5px;
+  border: 1px solid #666;
+  background: #333;
+  color: #fff;
+}
+label {
+  font-size: 0.9em;
+}
+#drop-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  padding: 1em 2em;
+}
+.monster-card {
+  background-color: #2a2a2a;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 1em;
+  width: 287px;
+  white-space: normal;
+  box-sizing: border-box;
+  text-align: center;
+}
+.monster-image {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 0.5em;
+}
+.monster-name {
+  font-weight: bold;
+  color: #ffcc00;
+  margin-bottom: 0.5em;
+}
+.monster-attr {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0.4em;
+  justify-content: center;
+  margin: 0.5em auto 1em auto;
+  padding: 0 1em;
+}
+.attr-box {
+  background-color: #111;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 0.3em 0.6em;
+  font-size: 0.85em;
+  color: #ccc;
+  white-space: nowrap;
+  text-align: center;
+}
+.attr-box.fullwidth {
+  grid-column: span 2;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.3em;
+  text-align: left;
+  padding-left: 1em;
+}
+.hide-text {
+  display: inline-block;
+  margin: 2px;
+}
+.hide-text .item-icon {
+  margin: 0;
+}
+.only-image-mode {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+.hide-text span {
+  display: none;
+}
+.hide-text:hover span {
+  display: inline-block;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  margin-left: 5px;
+  z-index: 10;
+  white-space: nowrap;
+}
+mark {
+  background-color: yellow;
+  color: black;
+}
+.item-icon.highlighted {
+  box-shadow: 0 0 6px 3px gold;
+  border-radius: 4px;
+}
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #666;
+  border-radius: 4px;
+  background: #333;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  margin-top: 0;
+  margin-right: 1px;
+  transition: border-color 0.2s, background 0.2s;
+}
+input[type="checkbox"]:checked {
+  background: #42aaff;
+  border-color: #42aaff;
+}
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+input[type="number"] {
+  width: 60px;
+  padding: 0.5em;
+  border-radius: 5px;
+  border: 1px solid #666;
+  background: #333;
+  color: #fff;
+  font-size: 1em;
+  box-sizing: border-box;
+}
