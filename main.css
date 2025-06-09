@@ -203,7 +203,7 @@ label {
 	align-items: center;
 	padding: 0.5em 0.6em;
 }
-.item {
+.item a {
 	display: flex;
 	align-items: center;
 	gap: 0.5em;
@@ -211,6 +211,18 @@ label {
 	text-align: left;
 	padding-left: 1em;
 }
+
+.item-icon-wrapper {
+  width: 28px;
+  height: 28px;
+}
+
+.item .item-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .hide-text {
 	display: inline-block;
 	margin: 2px;
