@@ -371,25 +371,19 @@ function renderCards(data, keyword = '', onlyMatchedDrops = false) {
         const itemText = document.createElement('span');
         itemText.innerHTML = highlight(getDisplayName(item), keyword);
 
-        if (isEquip) {
-          const itemLink = document.createElement('a');
-          itemLink.href = `https://maplesaga.com/library/cn/permalink/equip/${itemId}`;
-          itemLink.target = '_blank';
-          itemLink.style.color = 'inherit';
-          itemLink.style.textDecoration = 'none';
-          itemLink.appendChild(itemImg);
-          itemLink.appendChild(itemText);
-          itemDiv.appendChild(itemLink);
-        } else {
-          const itemLink = document.createElement('a');
-          itemLink.href = `https://maplesaga.com/library/cn/permalink/item/${itemId}`;
-          itemLink.target = '_blank';
-          itemLink.style.color = 'inherit';
-          itemLink.style.textDecoration = 'none';
-          itemLink.appendChild(itemImg);
-          itemLink.appendChild(itemText);
-          itemDiv.appendChild(itemLink);
-        }
+        const itemLink = document.createElement('a');
+        itemLink.href = `https://maplesaga.com/library/cn/permalink/${isEquip ? 'equip' : 'item'}/${itemId}`;
+        itemLink.target = '_blank';
+        itemLink.style.color = 'inherit';
+        itemLink.style.textDecoration = 'none';
+
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'item-icon-wrapper';
+        imgWrapper.appendChild(itemImg);
+        itemLink.appendChild(imgWrapper); 
+        itemLink.appendChild(itemText);
+        itemDiv.appendChild(itemLink);
+        
 
         if (isEquip) {
           equipContainer.appendChild(itemDiv);
@@ -405,24 +399,27 @@ function renderCards(data, keyword = '', onlyMatchedDrops = false) {
       if (equipContainer.hasChildNodes()) {
         const equipBox = document.createElement('div');
         equipBox.style.border = '1px solid #42aaff';
-        equipBox.style.padding = '4px';
-        equipBox.style.marginBottom = '6px';
+        equipBox.style.borderRadius = '4px';
+        equipBox.style.padding = '8px 2px';
+        equipBox.style.marginBottom = '8px';
         equipBox.appendChild(equipContainer);
         itemContainer.appendChild(equipBox);
       }
       if (useContainer.hasChildNodes()) {
         const useBox = document.createElement('div');
         useBox.style.border = '1px solid #42ff42';
-        useBox.style.padding = '4px';
-        useBox.style.marginBottom = '6px';
+        useBox.style.borderRadius = '4px';
+        useBox.style.padding = '8px 2px';
+        useBox.style.marginBottom = '8px';
         useBox.appendChild(useContainer);
         itemContainer.appendChild(useBox);
       }
       if (etcContainer.hasChildNodes()) {
         const etcBox = document.createElement('div');
         etcBox.style.border = '1px solid #ffaa42';
-        etcBox.style.padding = '4px';
-        etcBox.style.marginBottom = '6px';
+        etcBox.style.borderRadius = '4px';
+        etcBox.style.padding = '8px 2px';
+        etcBox.style.marginBottom = '8px';
         etcBox.appendChild(etcContainer);
         itemContainer.appendChild(etcBox);
       }
