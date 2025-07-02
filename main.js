@@ -922,10 +922,15 @@ window.addEventListener("scroll", () => {
 // 建立PWA
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker
-        .register("/PWA/js/service-worker.js")
+        .register("./PWA/js/service-worker.js")
         .then((reg) => {
             console.log("✅ Service worker registered.", reg);
 
+            if (reg.waiting) {
+                if (confirm("已有新版本可用，是否立即更新？")) {
+                    newWorker.postMessage("SKIP_WAITING");
+                }
+            }
             // 監聽更新狀態
             reg.onupdatefound = () => {
                 const newWorker = reg.installing;
