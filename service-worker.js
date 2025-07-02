@@ -1,7 +1,7 @@
 import { version } from "./version.js";
 // 定義快取的名稱，用來版本管理快取資料
 const CACHE_NAME = `artale-drop-v${version}`;
-
+console.log("version", CACHE_NAME);
 // 要被預先快取的資源清單
 const URLS_TO_CACHE = [
     "/", // 網站根目錄
