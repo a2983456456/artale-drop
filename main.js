@@ -795,28 +795,28 @@ Promise.all([
  */
 
 let debounceTimer; // 用於防抖的計時器
-
+const delay = 500; // 防抖延遲時間 (毫秒)
 // 為各個輸入框和選項設定監聽器，當使用者操作時，延遲 300 毫秒後觸發 refresh
 // 使用 debounce (防抖) 可以避免使用者連續輸入時頻繁觸發刷新，提升效能
 document.getElementById("search").addEventListener("input", () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(refresh, 300);
+    debounceTimer = setTimeout(refresh, delay);
 });
 document.getElementById("toggle-filtered").addEventListener("change", () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(refresh, 300);
+    debounceTimer = setTimeout(refresh, delay);
 });
 document.getElementById("toggle-name-hover").addEventListener("change", () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(refresh, 300);
+    debounceTimer = setTimeout(refresh, delay);
 });
 document.getElementById("min-lv").addEventListener("input", () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(refresh, 300);
+    debounceTimer = setTimeout(refresh, delay);
 });
 document.getElementById("max-lv").addEventListener("input", () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(refresh, 300);
+    debounceTimer = setTimeout(refresh, delay);
 });
 
 // "分享" 按鈕的點擊事件
@@ -922,7 +922,7 @@ window.addEventListener("scroll", () => {
 // 建立PWA
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker
-        .register("./PWA/js/service-worker.js", { type: "module" })
+        .register("./service-worker.js", { type: "module" })
         .then((reg) => {
             console.log("✅ Service worker registered.", reg);
 
