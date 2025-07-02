@@ -1,15 +1,15 @@
-import { version } from "../version.js";
+import { version } from "./version.js";
 // 定義快取的名稱，用來版本管理快取資料
 const CACHE_NAME = `artale-drop-v${version}`;
 
 // 要被預先快取的資源清單
 const URLS_TO_CACHE = [
     "/", // 網站根目錄
-    "../../index.html", // 主頁 HTML
-    "../../main.css", // CSS 檔案
-    "../../main.js", // 主 JS 檔案
-    "../image/icon-192.png", // PWA 小 icon
-    "../image/icon-512.png", // PWA 大 icon
+    "./index.html", // 主頁 HTML
+    "./main.css", // CSS 檔案
+    "./main.js", // 主 JS 檔案
+    "./PWA/image/icon-192.png", // PWA 小 icon
+    "./PWA/image/icon-512.png", // PWA 大 icon
 ];
 
 // 監聽 install 事件：第一次安裝 Service Worker 時觸發
