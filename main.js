@@ -928,7 +928,7 @@ if ("serviceWorker" in navigator) {
 
             if (reg.waiting) {
                 if (confirm("已有新版本可用，是否立即更新？")) {
-                    newWorker.postMessage("SKIP_WAITING");
+                    reg.waiting.postMessage("SKIP_WAITING");
                 }
             }
             // 監聽更新狀態
