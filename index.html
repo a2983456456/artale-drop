@@ -1,49 +1,173 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8">
-  <title>Artale怪物掉落物一覽</title>
-  <link rel="stylesheet" href="main.css">
-</head>
-<body>
-  <div class="disclaimer">
-    資料來源完全照搬自
-    <a href="https://docs.google.com/spreadsheets/d/1xb6FhSGcM6EIj7aDcUmxZA9zVxLEw8xxXxxej5Tcrt4/htmlview?gid=2100610320#gid=2100610320" target="_blank">
-      此 Google 試算表
-    </a>，若有任何錯誤請聯絡 Discord：<strong style="color:#ccc">PAPA#sesmegonxhic</strong>，或於 <a href="https://discord.com/channels/1364050807544090695/1372871456286969866" target="_blank">DC討論區貼文</a>反應（<a href="https://discord.com/invite/pAQYfS2eE5" target="_blank" style="color:#ccc; text-decoration: underline;">請先加入DC群</a>）<br>
-    目前名稱皆是台服原版的名稱，請各位協助填寫artale正確名稱於<a href="https://docs.google.com/spreadsheets/d/1opipjzN8rTARFgks--gYtmbxe8S34zQcJ4tj8KSQXyA/edit?usp=sharing" target="_blank">表格</a>中，我會定期更新到網頁中<br>
-    小廣告一下maple duel群組，同樣是MapleStory Worlds的遊戲：
-    <a href="https://discord.gg/84UuUXgRBm" target="_blank">
-      <img src="md.png" alt="廣告" style="height: 1.2em; width: auto; vertical-align: middle;">
-    </a>
-  </div>
-  <div class="top-bar">
-    <div class="controls">
-      <div class="search-controls">
-        <input type="text" id="search" placeholder="搜尋怪物或掉落物..." />
-        <label><input type="checkbox" id="toggle-filtered" /> 只顯示符合的掉落</label>
-        <label><input type="checkbox" id="toggle-name-hover" /> 只顯示掉落物圖片</label>
-        <label>等級：<input type="number" id="min-lv" style="width:70px;" placeholder="最小" /></label>
-        <label>~</label>
-        <label><input type="number" id="max-lv" style="width:70px;" placeholder="最大" /></label>
-        <button id="share-btn"
-          style="padding:0.2em 0.5em; border-radius:5px; border:1px solid #42aaff; background:#222; color:#42aaff; cursor:pointer;">分享</button>
-        <button class="toggle-regions-btn" onclick="toggleRegions()">區域選擇</button>
-        <button class="toggle-resistance-btn" onclick="toggleResistance()">屬性選擇</button>
-      </div>
-      <div class="region-controls">
-        <button class="select-all-btn" onclick="selectAllRegions()" style="margin-right: 1em; padding: 0.2em 0.5em; border-radius: 4px; border: 1px solid #666; background: #333; color: #ddd; cursor: pointer; font-size: 0.9em;">全部選擇</button>
-        <button class="deselect-all-btn" onclick="deselectAllRegions()" style="margin-right: 1em; padding: 0.2em 0.5em; border-radius: 4px; border: 1px solid #666; background: #333; color: #ddd; cursor: pointer; font-size: 0.9em;">全部取消</button>
-        <button class="toggle-default-btn" onclick="selectDefaultRegions()" style="margin-right: 1em; padding: 0.2em 0.5em; border-radius: 4px; border: 1px solid #666; background: #333; color: #ddd; cursor: pointer; font-size: 0.9em;">選擇已開放區域</button>
-        <span id="region-checkboxes"></span>
-      </div>
-      <div class="resistance-controls">
-        <span id="resistance-checkboxes"></span>
-      </div>
-    </div>
-  </div>
-  <div id="drop-container">載入中...</div>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="manifest" href="./manifest.json" />
+        <link
+            rel="apple-touch-icon"
+            sizes="192x192"
+            href="./PWA/image/artale-icon-192.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="512x512"
+            href="./PWA/image/artale-icon-512.png"
+        />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#317EFB" />
+        <title>Artale怪物掉落物一覽</title>
+        <link rel="stylesheet" href="main.css" />
+    </head>
+    <body>
+        <div class="disclaimer">
+            資料來源完全照搬自
+            <a
+                href="https://docs.google.com/spreadsheets/d/1xb6FhSGcM6EIj7aDcUmxZA9zVxLEw8xxXxxej5Tcrt4/htmlview?gid=2100610320#gid=2100610320"
+                target="_blank"
+            >
+                此 Google 試算表 </a
+            >，若有任何錯誤請聯絡 Discord：<strong style="color: #ccc"
+                >PAPA#sesmegonxhic</strong
+            >，或於
+            <a
+                href="https://discord.com/channels/1364050807544090695/1372871456286969866"
+                target="_blank"
+                >DC討論區貼文</a
+            >反應（<a
+                href="https://discord.com/invite/pAQYfS2eE5"
+                target="_blank"
+                style="color: #ccc; text-decoration: underline"
+                >請先加入DC群</a
+            >）<br />
+            目前名稱皆是台服原版的名稱，請各位協助填寫artale正確名稱於<a
+                href="https://docs.google.com/spreadsheets/d/1opipjzN8rTARFgks--gYtmbxe8S34zQcJ4tj8KSQXyA/edit?usp=sharing"
+                target="_blank"
+                >表格</a
+            >中，我會定期更新到網頁中<br />
+            小廣告一下maple duel群組，同樣是MapleStory Worlds的遊戲：
+            <a href="https://discord.gg/84UuUXgRBm" target="_blank">
+                <img
+                    src="md.png"
+                    alt="廣告"
+                    style="height: 1.2em; width: auto; vertical-align: middle"
+                />
+            </a>
+        </div>
+        <div class="top-bar">
+            <div class="controls">
+                <div class="search-controls">
+                    <input
+                        type="text"
+                        id="search"
+                        placeholder="搜尋怪物或掉落物..."
+                    />
+                    <label
+                        ><input type="checkbox" id="toggle-filtered" />
+                        只顯示符合的掉落</label
+                    >
+                    <label
+                        ><input type="checkbox" id="toggle-name-hover" />
+                        只顯示掉落物圖片</label
+                    >
+                    <label
+                        >等級：<input
+                            type="number"
+                            id="min-lv"
+                            style="width: 70px"
+                            placeholder="最小"
+                    /></label>
+                    <label>~</label>
+                    <label
+                        ><input
+                            type="number"
+                            id="max-lv"
+                            style="width: 70px"
+                            placeholder="最大"
+                    /></label>
+                    <button
+                        id="share-btn"
+                        style="
+                            padding: 0.2em 0.5em;
+                            border-radius: 5px;
+                            border: 1px solid #42aaff;
+                            background: #222;
+                            color: #42aaff;
+                            cursor: pointer;
+                        "
+                    >
+                        分享
+                    </button>
+                    <button
+                        class="toggle-regions-btn"
+                        onclick="toggleRegions()"
+                    >
+                        區域選擇
+                    </button>
+                    <button
+                        class="toggle-resistance-btn"
+                        onclick="toggleResistance()"
+                    >
+                        屬性選擇
+                    </button>
+                </div>
+                <div class="region-controls">
+                    <button
+                        class="select-all-btn"
+                        onclick="selectAllRegions()"
+                        style="
+                            margin-right: 1em;
+                            padding: 0.2em 0.5em;
+                            border-radius: 4px;
+                            border: 1px solid #666;
+                            background: #333;
+                            color: #ddd;
+                            cursor: pointer;
+                            font-size: 0.9em;
+                        "
+                    >
+                        全部選擇
+                    </button>
+                    <button
+                        class="deselect-all-btn"
+                        onclick="deselectAllRegions()"
+                        style="
+                            margin-right: 1em;
+                            padding: 0.2em 0.5em;
+                            border-radius: 4px;
+                            border: 1px solid #666;
+                            background: #333;
+                            color: #ddd;
+                            cursor: pointer;
+                            font-size: 0.9em;
+                        "
+                    >
+                        全部取消
+                    </button>
+                    <button
+                        class="toggle-default-btn"
+                        onclick="selectDefaultRegions()"
+                        style="
+                            margin-right: 1em;
+                            padding: 0.2em 0.5em;
+                            border-radius: 4px;
+                            border: 1px solid #666;
+                            background: #333;
+                            color: #ddd;
+                            cursor: pointer;
+                            font-size: 0.9em;
+                        "
+                    >
+                        選擇已開放區域
+                    </button>
+                    <span id="region-checkboxes"></span>
+                </div>
+                <div class="resistance-controls">
+                    <span id="resistance-checkboxes"></span>
+                </div>
+            </div>
+        </div>
+        <div id="drop-container">載入中...</div>
 
-  <script src="main.js"></script>
-</body>
+        <script src="main.js"></script>
+    </body>
 </html>

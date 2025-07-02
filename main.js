@@ -918,3 +918,34 @@ window.addEventListener("scroll", () => {
 
     lastScrollTop = scrollTop;
 });
+
+// 建立PWA
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+        .register("/PWA/js/service-worker.js")
+        .then((reg) => {
+            console.log("✅ Service worker registered.", reg);
+
+            // 監聽更新狀態
+            reg.onupdatefound = () => {
+                const newWorker = reg.installing;
+                newWorker.onstatechange = () => {
+                    if (newWorker.state === "installed") {
+                        if (navigator.serviceWorker.controller) {
+                            // 有新版本 → 通知用戶
+                            if (confirm("已有新版本可用，是否立即更新？")) {
+                                newWorker.postMessage("SKIP_WAITING");
+                            }
+                        } else {
+                            console.log("PWA 已安裝並可離線使用");
+                        }
+                    }
+                };
+            };
+        });
+
+    // 監聽 controllerchange → 強制 reload 新版本
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+        window.location.reload();
+    });
+}
