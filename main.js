@@ -992,6 +992,11 @@ if ("serviceWorker" in navigator) {
                     }
                 };
             };
+            setInterval(() => {
+                navigator.serviceWorker.getRegistration().then((reg) => {
+                    if (reg) reg.update();
+                });
+            }, 5 * 60 * 1000);
         });
 
     // 監聽 controllerchange → 強制 reload 新版本
