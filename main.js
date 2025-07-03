@@ -71,9 +71,10 @@ function isBoss(monster) {
  * 如果有別名，會以 "本名(別名)" 的格式顯示
  * 如果是 BOSS，會在名稱後加上 "(BOSS)"
  * @param {string} item - 物品或怪物名稱
+ * @param {string} number - 物品數量
  * @returns {string} - 處理後的顯示名稱
  */
-function getDisplayName(item) {
+function getDisplayName(item, number) {
     let name = item;
     // 檢查是否有別名，且別名不等於本名
     if (aliasMap[item] && aliasMap[item] !== item) {
@@ -83,7 +84,7 @@ function getDisplayName(item) {
     if (isBoss(item)) {
         name += " (BOSS)";
     }
-    return name;
+    return `${name}${number ? ` X ${number}` : ""}`;
 }
 
 /**
@@ -465,17 +466,21 @@ function renderCard(container, monster, items, keyword = "") {
     const useContainer = document.createElement("div"); // 消耗
     const etcContainer = document.createElement("div"); // 其他
     const otherContainer = document.createElement("div"); // 未分類
-
     items.forEach((item) => {
         const itemDiv = document.createElement("div");
         itemDiv.className = onlyShowImage ? "hide-text" : "item";
 
+        // 物品名稱和數量 (利用 X or x 切割)
+        const itemSplit = item.split(/[Xx]/);
+        const itemName = itemSplit[0].trim();
+        const itemNumber = itemSplit.length > 1 ? itemSplit[1].trim() : "";
+
         const itemImg = document.createElement("img");
-        itemImg.src = `image/${encodeURIComponent(item)}.png`;
-        itemImg.alt = item;
+        itemImg.src = `image/${encodeURIComponent(itemName)}.png`;
+        itemImg.alt = itemName;
         itemImg.className = "item-icon";
 
-        const itemId = parseInt(nameToIdMap[item] ?? "0");
+        const itemId = parseInt(nameToIdMap[itemName] ?? "0");
         // 根據 Item ID 判斷是否為裝備
         const isEquip =
             (itemId >= 1000001 && itemId <= 1999999) ||
@@ -483,12 +488,15 @@ function renderCard(container, monster, items, keyword = "") {
             (itemId >= 2330000 && itemId <= 2339999);
 
         // 如果物品符合關鍵字，給予高亮樣式
-        if (keyword && matchesKeyword(item, keyword)) {
+        if (keyword && matchesKeyword(itemName, keyword)) {
             itemImg.classList.add("highlighted");
         }
 
         const itemText = document.createElement("span");
-        itemText.innerHTML = highlight(getDisplayName(item), keyword);
+        itemText.innerHTML = highlight(
+            getDisplayName(itemName, itemNumber),
+            keyword
+        );
 
         // 為物品建立前往 maplesaga library 的外部連結
         const itemLink = document.createElement("a");
