@@ -207,6 +207,9 @@ function renderCard(container, monster, items, keyword = "") {
         "甜心香水",
         "人偶羅絲",
         "搞怪CD",
+        "魔幻電音",
+        "魔法音響",
+        "瘋狂喵z客",
     ];
     let monsterSampleName = "";
     if (monster101.includes(monster)) {
