@@ -171,7 +171,7 @@ function prepareLazyRender(data, keyword = "", onlyMatchedDrops = false) {
         });
     lazyIndex = 0;
     document.getElementById("drop-container").innerHTML = "";
-    loadNextBatch();
+    return lazyData.length;
 }
 
 /**
@@ -605,7 +605,7 @@ function loadNextBatch() {
  * 刷新頁面顯示的總入口函式
  * 根據目前所有的篩選條件（關鍵字、區域、屬性等）重新渲染卡片
  */
-function refresh() {
+function refresh(writeHistory = true) {
     const keyword = document.getElementById("search").value;
     const onlyMatchedDrops = document.getElementById("toggle-filtered").checked;
     const regionSet = selectedRegions;
@@ -644,8 +644,48 @@ function refresh() {
             filteredDrop[monster] = items;
         }
     }
-    // 使用過濾後的資料重新渲染卡片
-    prepareLazyRender(filteredDrop, keyword, onlyMatchedDrops);
+    // 取得查詢結果數量
+    const resultCount = prepareLazyRender(
+        filteredDrop,
+        keyword,
+        onlyMatchedDrops
+    );
+
+    // === 新增：查詢紀錄寫入（安全且有效） ===
+    if (
+        writeHistory &&
+        window.historyManager &&
+        keyword &&
+        keyword.trim() &&
+        resultCount > 0
+    ) {
+        let type = "item";
+        if (mobData[keyword]) {
+            type = "monster";
+        }
+        const safeKeyword = keyword.trim().replace(
+            /[<>&"']/g,
+            (c) =>
+                ({
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    "&": "&amp;",
+                    '"': "&quot;",
+                    "'": "&#39;",
+                }[c] || c)
+        );
+        const record = {
+            type,
+            keyword: safeKeyword,
+            timestamp: Date.now(),
+        };
+        window.historyManager.addRecord(type, safeKeyword);
+        window.dispatchEvent(
+            new CustomEvent("history-record-added", { detail: record })
+        );
+    }
+    // 查詢紀錄寫入後再渲染
+    loadNextBatch();
 }
 
 /**

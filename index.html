@@ -31,6 +31,7 @@
         <meta property="og:type" content="website" />
         <title>Artale 楓之谷掉落物查詢工具</title>
         <link rel="stylesheet" href="main.css" />
+        <link rel="stylesheet" href="historySidebar.css" />
     </head>
     <body>
         <div class="disclaimer">
@@ -98,6 +99,7 @@
                     >
                         分享
                     </button>
+                    <button id="history-btn">歷史紀錄</button>
                     <button
                         class="toggle-regions-btn"
                         onclick="toggleRegions()"
@@ -179,6 +181,19 @@
         >
             沒有更多資訊顯示
         </div>
+        <script src="historyManager.js"></script>
         <script src="main.js"></script>
+        <script src="historySidebar.js"></script>
+        <!-- 歷史紀錄側欄 -->
+        <div id="history-sidebar" class="history-sidebar">
+            <div class="history-sidebar-header">
+                <span>查詢歷史紀錄</span>
+                <div style="display: flex; gap: 0.5em; align-items: center">
+                    <button id="clear-history-btn">清除</button>
+                    <button id="close-history-btn">×</button>
+                </div>
+            </div>
+            <ul id="history-list" class="history-list"></ul>
+        </div>
     </body>
 </html>
