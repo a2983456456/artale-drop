@@ -531,20 +531,19 @@ function renderCard(container, monster, items, keyword = "") {
         itemLink.style.textDecoration = "none";
         itemLink.appendChild(itemImg);
         itemLink.appendChild(itemText);
+
         // 新邏輯：不在 checkMonsterDrop[monster] 的才顯示打勾
-        let iconSpan = document.createElement("span");
-        iconSpan.style.marginLeft = "0.3em";
         if (
-            !checkMonsterDrop[monster] ||
-            !checkMonsterDrop[monster].includes(itemName)
+            checkMonsterDrop[monster] &&
+            checkMonsterDrop[monster].includes(itemName)
         ) {
-            iconSpan.textContent = "✔️";
-            iconSpan.title = "已確認掉落";
-        } else {
+            let iconSpan = document.createElement("span");
+            iconSpan.style.marginLeft = "0.3em";
             iconSpan.textContent = "❓";
             iconSpan.title = "尚未確認掉落";
+            itemLink.appendChild(iconSpan);
         }
-        itemLink.appendChild(iconSpan);
+
         itemDiv.appendChild(itemLink);
 
         // 根據 Item ID 將物品放入對應的分類容器
