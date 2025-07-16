@@ -23,6 +23,7 @@ let selectedResistances = new Set(); // 儲存使用者選擇的屬性弱點篩�
 let lazyData = [];
 const BATCH_SIZE = 12; // 每次載入的數量，可調整效能
 let lazyIndex = 0;
+let checkMonsterDrop = {};
 /**
  * =================================================================
  * 核心功能函式
@@ -530,6 +531,20 @@ function renderCard(container, monster, items, keyword = "") {
         itemLink.style.textDecoration = "none";
         itemLink.appendChild(itemImg);
         itemLink.appendChild(itemText);
+        // 新邏輯：不在 checkMonsterDrop[monster] 的才顯示打勾
+        let iconSpan = document.createElement("span");
+        iconSpan.style.marginLeft = "0.3em";
+        if (
+            !checkMonsterDrop[monster] ||
+            !checkMonsterDrop[monster].includes(itemName)
+        ) {
+            iconSpan.textContent = "✔️";
+            iconSpan.title = "已確認掉落";
+        } else {
+            iconSpan.textContent = "❓";
+            iconSpan.title = "尚未確認掉落";
+        }
+        itemLink.appendChild(iconSpan);
         itemDiv.appendChild(itemLink);
 
         // 根據 Item ID 將物品放入對應的分類容器
@@ -704,182 +719,199 @@ Promise.all([
     fetch("map_exception.json").then((res) => res.json()),
     fetch("area.json").then((res) => res.json()),
     fetch("alias.json").then((res) => res.json()),
+    fetch("check_monster_drop.json").then((res) => res.json()),
 ])
-    .then(([drop, mob, itemMap, boss, map, mapException, areaData, alias]) => {
-        // --- 資料前處理 ---
+    .then(
+        ([
+            drop,
+            mob,
+            itemMap,
+            boss,
+            map,
+            mapException,
+            areaData,
+            alias,
+            checkDrop,
+        ]) => {
+            // --- 資料前處理 ---
 
-        spawnMap = {};
-        area = areaData;
-        aliasMap = alias;
+            spawnMap = {};
+            area = areaData;
+            aliasMap = alias;
+            checkMonsterDrop = checkDrop;
 
-        // 處理地圖資料，校正地圖名稱並建立 spawnMap
-        for (const [monster, maps] of Object.entries(map)) {
-            spawnMap[monster] = {};
-            for (const [mapName, value] of Object.entries(maps)) {
-                // 根據 map_exception.json 校正或過濾地圖
-                if (mapException[mapName] !== undefined) {
-                    if (mapException[mapName] !== "INVALID") {
-                        spawnMap[monster][mapException[mapName]] = value;
+            // 處理地圖資料，校正地圖名稱並建立 spawnMap
+            for (const [monster, maps] of Object.entries(map)) {
+                spawnMap[monster] = {};
+                for (const [mapName, value] of Object.entries(maps)) {
+                    // 根據 map_exception.json 校正或過濾地圖
+                    if (mapException[mapName] !== undefined) {
+                        if (mapException[mapName] !== "INVALID") {
+                            spawnMap[monster][mapException[mapName]] = value;
+                        }
+                        continue;
                     }
-                    continue;
+                    const [region, ...rest] = mapName.split("：");
+                    if (mapException[region] === "INVALID") {
+                        continue;
+                    }
+                    const correctRegion = mapException[region] || region;
+                    const correctMapName = [correctRegion, ...rest].join("：");
+                    spawnMap[monster][correctMapName] = value;
                 }
-                const [region, ...rest] = mapName.split("：");
-                if (mapException[region] === "INVALID") {
-                    continue;
+                // 如果處理完怪物沒有任何有效率地圖，則從 spawnMap 中刪除
+                if (Object.keys(spawnMap[monster]).length === 0) {
+                    delete spawnMap[monster];
                 }
-                const correctRegion = mapException[region] || region;
-                const correctMapName = [correctRegion, ...rest].join("：");
-                spawnMap[monster][correctMapName] = value;
             }
-            // 如果處理完怪物沒有任何有效率地圖，則從 spawnMap 中刪除
-            if (Object.keys(spawnMap[monster]).length === 0) {
-                delete spawnMap[monster];
+
+            bossTime = boss;
+            mobData = mob;
+
+            // 建立 item name -> id 的映射表
+            nameToIdMap = {};
+            for (const [id, name] of Object.entries(itemMap)) {
+                nameToIdMap[name] = id;
             }
-        }
 
-        bossTime = boss;
-        mobData = mob;
+            // 處理掉落資料，將每個怪物的掉落物進行排序
+            Object.entries(drop).forEach(([monster, items]) => {
+                drop[monster] = items.sort((a, b) => {
+                    const aId = parseInt(nameToIdMap[a] ?? "0");
+                    const bId = parseInt(nameToIdMap[b] ?? "0");
+                    const isAEquip = aId >= 1000001 && aId <= 1999999;
+                    const isBEquip = bId >= 1000001 && bId <= 1999999;
 
-        // 建立 item name -> id 的映射表
-        nameToIdMap = {};
-        for (const [id, name] of Object.entries(itemMap)) {
-            nameToIdMap[name] = id;
-        }
+                    // 裝備優先顯示
+                    if (isAEquip && !isBEquip) return -1;
+                    if (!isAEquip && isBEquip) return 1;
 
-        // 處理掉落資料，將每個怪物的掉落物進行排序
-        Object.entries(drop).forEach(([monster, items]) => {
-            drop[monster] = items.sort((a, b) => {
-                const aId = parseInt(nameToIdMap[a] ?? "0");
-                const bId = parseInt(nameToIdMap[b] ?? "0");
-                const isAEquip = aId >= 1000001 && aId <= 1999999;
-                const isBEquip = bId >= 1000001 && bId <= 1999999;
-
-                // 裝備優先顯示
-                if (isAEquip && !isBEquip) return -1;
-                if (!isAEquip && isBEquip) return 1;
-
-                // 其次按 ID 排序
-                return aId - bId;
+                    // 其次按 ID 排序
+                    return aId - bId;
+                });
             });
-        });
-        dropData = drop;
+            dropData = drop;
 
-        // --- 動態生成 UI 介面 ---
+            // --- 動態生成 UI 介面 ---
 
-        // 根據地圖資料生成 "區域選擇" 的核取方塊
-        const regionSet = new Set();
-        for (const maps of Object.values(spawnMap)) {
-            Object.keys(maps).forEach((map) =>
-                regionSet.add(map.split("：")[0])
-            );
-        }
-        const regionCheckboxes = document.getElementById("region-checkboxes");
-        Object.entries(area).forEach(([region, defaultChecked]) => {
-            if (regionSet.has(region)) {
-                const label = document.createElement("label");
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = region;
-                checkbox.checked = defaultChecked === 1; // 根據 area.json 的設定決定是否預設勾選
-                if (checkbox.checked) selectedRegions.add(region);
-                checkbox.addEventListener("change", () => {
+            // 根據地圖資料生成 "區域選擇" 的核取方塊
+            const regionSet = new Set();
+            for (const maps of Object.values(spawnMap)) {
+                Object.keys(maps).forEach((map) =>
+                    regionSet.add(map.split("：")[0])
+                );
+            }
+            const regionCheckboxes =
+                document.getElementById("region-checkboxes");
+            Object.entries(area).forEach(([region, defaultChecked]) => {
+                if (regionSet.has(region)) {
+                    const label = document.createElement("label");
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.value = region;
+                    checkbox.checked = defaultChecked === 1; // 根據 area.json 的設定決定是否預設勾選
                     if (checkbox.checked) selectedRegions.add(region);
-                    else selectedRegions.delete(region);
+                    checkbox.addEventListener("change", () => {
+                        if (checkbox.checked) selectedRegions.add(region);
+                        else selectedRegions.delete(region);
+                        refresh();
+                    });
+                    label.appendChild(checkbox);
+                    label.append(` ${region}`);
+                    regionCheckboxes.appendChild(label);
+                }
+            });
+
+            // 根據怪物屬性資料生成 "屬性選擇" 的按鈕
+            const resistanceLabels = {
+                H: "聖",
+                F: "火",
+                I: "冰",
+                S: "毒",
+                L: "雷",
+            };
+            const valueLabels = { 3: "加成" }; // 只篩選有 "加成" 效果的屬性
+
+            const resistanceTypes = new Set();
+            Object.values(mob).forEach((mobInfo) => {
+                const resistance = mobInfo[9];
+                if (!resistance) return;
+                if (resistance === "ALL2") return; // 忽略 ALL2
+
+                let i = 0;
+                while (i < resistance.length) {
+                    if (resistance.substring(i, i + 2) === "HS") {
+                        resistanceTypes.add("HS"); // 可治癒
+                        i += 2;
+                        continue;
+                    }
+                    const type = resistance[i];
+                    const value = resistance[i + 1];
+                    // 只關心有加成效果 (value === '3') 的魔法屬性
+                    if (
+                        type !== "P" &&
+                        value === "3" &&
+                        resistanceLabels[type] &&
+                        valueLabels[value]
+                    ) {
+                        resistanceTypes.add(`${type}${value}`);
+                    }
+                    i += 2;
+                }
+            });
+
+            const resistanceCheckboxes = document.getElementById(
+                "resistance-checkboxes"
+            );
+
+            // 對屬性按鈕進行排序
+            const sortedResistances = Array.from(resistanceTypes).sort(
+                (a, b) => {
+                    // 定義順序權重
+                    const order = {
+                        F3: 1, // 火加成
+                        S3: 2, // 毒加成
+                        I3: 3, // 冰加成
+                        L3: 4, // 雷加成
+                        H3: 5, // 聖加成
+                        HS: 6, // 可治癒
+                    };
+                    return (order[a] || 99) - (order[b] || 99);
+                }
+            );
+
+            // 建立屬性篩選按鈕
+            sortedResistances.forEach((resistance) => {
+                const label = document.createElement("label");
+                const button = document.createElement("button");
+                button.type = "button";
+                button.value = resistance;
+
+                if (resistance === "HS") {
+                    button.textContent = "可治癒";
+                } else {
+                    const type = resistance[0];
+                    const value = resistance[1];
+                    button.textContent = `${resistanceLabels[type]}${valueLabels[value]}`;
+                }
+
+                button.addEventListener("click", () => {
+                    button.classList.toggle("selected"); // 切換選中樣式
+                    if (button.classList.contains("selected")) {
+                        selectedResistances.add(resistance);
+                    } else {
+                        selectedResistances.delete(resistance);
+                    }
                     refresh();
                 });
-                label.appendChild(checkbox);
-                label.append(` ${region}`);
-                regionCheckboxes.appendChild(label);
-            }
-        });
-
-        // 根據怪物屬性資料生成 "屬性選擇" 的按鈕
-        const resistanceLabels = {
-            H: "聖",
-            F: "火",
-            I: "冰",
-            S: "毒",
-            L: "雷",
-        };
-        const valueLabels = { 3: "加成" }; // 只篩選有 "加成" 效果的屬性
-
-        const resistanceTypes = new Set();
-        Object.values(mob).forEach((mobInfo) => {
-            const resistance = mobInfo[9];
-            if (!resistance) return;
-            if (resistance === "ALL2") return; // 忽略 ALL2
-
-            let i = 0;
-            while (i < resistance.length) {
-                if (resistance.substring(i, i + 2) === "HS") {
-                    resistanceTypes.add("HS"); // 可治癒
-                    i += 2;
-                    continue;
-                }
-                const type = resistance[i];
-                const value = resistance[i + 1];
-                // 只關心有加成效果 (value === '3') 的魔法屬性
-                if (
-                    type !== "P" &&
-                    value === "3" &&
-                    resistanceLabels[type] &&
-                    valueLabels[value]
-                ) {
-                    resistanceTypes.add(`${type}${value}`);
-                }
-                i += 2;
-            }
-        });
-
-        const resistanceCheckboxes = document.getElementById(
-            "resistance-checkboxes"
-        );
-
-        // 對屬性按鈕進行排序
-        const sortedResistances = Array.from(resistanceTypes).sort((a, b) => {
-            // 定義順序權重
-            const order = {
-                F3: 1, // 火加成
-                S3: 2, // 毒加成
-                I3: 3, // 冰加成
-                L3: 4, // 雷加成
-                H3: 5, // 聖加成
-                HS: 6, // 可治癒
-            };
-            return (order[a] || 99) - (order[b] || 99);
-        });
-
-        // 建立屬性篩選按鈕
-        sortedResistances.forEach((resistance) => {
-            const label = document.createElement("label");
-            const button = document.createElement("button");
-            button.type = "button";
-            button.value = resistance;
-
-            if (resistance === "HS") {
-                button.textContent = "可治癒";
-            } else {
-                const type = resistance[0];
-                const value = resistance[1];
-                button.textContent = `${resistanceLabels[type]}${valueLabels[value]}`;
-            }
-
-            button.addEventListener("click", () => {
-                button.classList.toggle("selected"); // 切換選中樣式
-                if (button.classList.contains("selected")) {
-                    selectedResistances.add(resistance);
-                } else {
-                    selectedResistances.delete(resistance);
-                }
-                refresh();
+                label.appendChild(button);
+                resistanceCheckboxes.appendChild(label);
             });
-            label.appendChild(button);
-            resistanceCheckboxes.appendChild(label);
-        });
 
-        // 所有資料處理和 UI 生成完畢後，執行第一次渲染
-        refresh();
-    })
+            // 所有資料處理和 UI 生成完畢後，執行第一次渲染
+            refresh();
+        }
+    )
     .catch((error) => {
         // 如果資料載入失敗，顯示錯誤訊息
         document.getElementById("drop-container").innerText =
