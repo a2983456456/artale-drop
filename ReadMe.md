@@ -41,4 +41,4 @@
 ### PWA
 
 使用 manifest.json 進行建置並利用 PWA/image 的圖片當作 應用程式的 Image
-建置與更版 JS 撰寫在 main.js 的下方
+建置與更版 JS 撰寫在 main.js 的下方 和 service-worker.js
