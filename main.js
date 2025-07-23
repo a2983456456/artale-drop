@@ -198,11 +198,10 @@ function renderCard(container, monster, items, keyword = "") {
     monsterImg.className = "monster-image";
     card.appendChild(monsterImg);
 
-    // 101 怪物目前資料僅供參考 (鬼兔妮,人偶傑克,惡魔水靈,冷豔香水,百花香水,甜心香水,人偶羅絲,搞怪CD)
+    // 101 怪物目前資料僅供參考 (鬼兔妮,人偶傑克,冷豔香水,百花香水,甜心香水,人偶羅絲,搞怪CD)
     const monster101 = [
         "鬼兔妮",
         "人偶傑克",
-        "惡魔水靈",
         "冷豔香水",
         "百花香水",
         "甜心香水",
