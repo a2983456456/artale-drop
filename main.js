@@ -199,31 +199,27 @@ function renderCard(container, monster, items, keyword = "") {
     card.appendChild(monsterImg);
 
     // 101 怪物目前資料僅供參考 (人偶傑克,冷豔香水,百花香水,甜心香水,人偶羅絲,搞怪CD)
-    const monster101 = [
-        "人偶傑克",
-        "冷豔香水",
-        "百花香水",
-        "甜心香水",
-        "人偶羅絲",
-        "搞怪CD",
-        "魔幻電音",
-        "魔法音響",
-        "瘋狂喵z客",
-    ];
-    let monsterSampleName = "";
-    if (monster101.includes(monster)) {
-        monsterSampleName = " - 資訊待修正";
-    }
+    // const monster101 = [
+    //     "人偶傑克",
+    //     "冷豔香水",
+    //     "百花香水",
+    //     "甜心香水",
+    //     "人偶羅絲",
+    //     "搞怪CD",
+    //     "魔幻電音",
+    //     "魔法音響",
+    //     "瘋狂喵z客",
+    // ];
+    // let monsterSampleName = "";
+    // if (monster101.includes(monster)) {
+    //     monsterSampleName = " - 資訊待修正";
+    // }
 
     // 怪物名稱 (包含高亮)
     const monsterTitle = document.createElement("div");
     monsterTitle.className = "monster-name";
-    monsterTitle.innerHTML = highlight(
-        getDisplayName(`${monster}${monsterSampleName}`),
-        keyword
-    );
+    monsterTitle.innerHTML = highlight(getDisplayName(`${monster}`), keyword);
     card.appendChild(monsterTitle);
-    console.log("monster", monster);
 
     // 如果有怪物的詳細屬性資料，則顯示
     if (mobData[monster]) {
