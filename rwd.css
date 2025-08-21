@@ -13,15 +13,29 @@
     #region-checkboxes {
         grid-template-columns: repeat(7, minmax(80px, 1fr));
     }
+    .monster-image {
+        width: 75px;
+        height: 75px;
+    }
+    .monster-name,
+    .monster-attr {
+        font-size: 20px;
+    }
+    .item-icon {
+        width: 40px;
+    }
+    .item-icon + span {
+        font-size: 20px;
+    }
 }
 
-@media screen and (max-width: 890px) {
+@media screen and (max-width: 920px) {
     .search-controls {
         grid-template-columns: 1fr 1fr 1fr;
     }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 710px) {
     .search-controls {
         grid-template-columns: 1fr 1fr;
     }
