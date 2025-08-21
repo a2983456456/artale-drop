@@ -965,6 +965,7 @@ function toggleRegions() {
     const regionControls = document.querySelector(".region-controls");
     const toggleBtn = document.querySelector(".toggle-regions-btn");
     regionControls.classList.toggle("show");
+    regionControls.classList.toggle("d-none");
     toggleBtn.textContent = regionControls.classList.contains("show")
         ? "隱藏區域選擇"
         : "區域選擇";
@@ -1018,6 +1019,7 @@ function toggleResistance() {
     const resistanceControls = document.querySelector(".resistance-controls");
     const toggleBtn = document.querySelector(".toggle-resistance-btn");
     resistanceControls.classList.toggle("show");
+    resistanceControls.classList.toggle("d-none");
     toggleBtn.textContent = resistanceControls.classList.contains("show")
         ? "隱藏屬性選擇"
         : "屬性選擇";

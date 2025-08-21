@@ -32,6 +32,7 @@
         <title>Artale 楓之谷掉落物查詢工具</title>
         <link rel="stylesheet" href="main.css" />
         <link rel="stylesheet" href="historySidebar.css" />
+        <link rel="stylesheet" href="rwd.css" />
     </head>
     <!-- Google tag (gtag.js) -->
     <script
@@ -91,15 +92,15 @@
                             id="min-lv"
                             style="width: 70px"
                             placeholder="最小"
-                    /></label>
-                    <label>~</label>
-                    <label
-                        ><input
+                        />
+                        <span>~</span>
+                        <input
                             type="number"
                             id="max-lv"
                             style="width: 70px"
                             placeholder="最大"
-                    /></label>
+                        />
+                    </label>       ></label> -->
                     <button
                         id="share-btn"
                         style="
@@ -127,7 +128,7 @@
                         屬性選擇
                     </button>
                 </div>
-                <div class="region-controls">
+                <div class="region-controls d-none">
                     <button
                         class="select-all-btn"
                         onclick="selectAllRegions()"
@@ -178,7 +179,7 @@
                     </button>
                     <span id="region-checkboxes"></span>
                 </div>
-                <div class="resistance-controls">
+                <div class="resistance-controls d-none">
                     <span id="resistance-checkboxes"></span>
                 </div>
             </div>

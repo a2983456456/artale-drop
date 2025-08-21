@@ -77,14 +77,15 @@ body {
     top: 0;
     background-color: #1e1e1e;
     z-index: 100;
-    padding: 1em 2em 0 2em;
+    /* padding: 1em 2em 0 2em; */
+    padding: 1em 2em;
     border-bottom: 1px solid #333;
 }
 .controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1em;
+    gap: 15px;
 }
 .search-controls {
     display: flex;
@@ -112,8 +113,7 @@ body {
     transition: max-height 0.3s ease-out, padding 0.3s ease-out;
 }
 .region-controls.show {
-    max-height: 200px;
-    padding: 0.5em 0;
+    max-height: 300px;
 }
 #region-checkboxes {
     display: grid;
@@ -140,7 +140,6 @@ body {
     background: #444;
 }
 input[type="text"] {
-    width: 150px;
     padding: 0.5em;
     border-radius: 5px;
     border: 1px solid #666;
@@ -392,7 +391,6 @@ input[type="number"] {
 
 .resistance-controls.show {
     max-height: 200px;
-    padding: 0.5em;
 }
 
 /* 選項容器樣式 */
