@@ -687,6 +687,14 @@ function refresh(writeHistory = true) {
             keyword: safeKeyword,
             timestamp: Date.now(),
         };
+
+        // GTM (google tag manager)
+        if (window.dataLayer)
+            window.dataLayer.push({
+                event: "monster_search",
+                monsterKeyWord: safeKeyword,
+            });
+
         window.historyManager.addRecord(type, safeKeyword);
         window.dispatchEvent(
             new CustomEvent("history-record-added", { detail: record })
