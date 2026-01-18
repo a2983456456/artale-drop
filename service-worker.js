@@ -18,19 +18,33 @@ self.addEventListener("install", (event) => {
         // 開啟指定名稱的 cache（如果沒有會建立）
         caches.open(CACHE_NAME).then((cache) =>
             // 將 URLS_TO_CACHE 裡的檔案都加入快取
-            cache.addAll(URLS_TO_CACHE)
-        )
+            cache.addAll(URLS_TO_CACHE),
+        ),
     );
     self.skipWaiting();
 });
 
 // 監聽 fetch 事件：攔截所有網路請求
 self.addEventListener("fetch", (event) => {
+    // 只快取 HTTP/HTTPS 請求，過濾掉 chrome-extension、data、blob 等協議
+    if (
+        !event.request.url.startsWith("http://") &&
+        !event.request.url.startsWith("https://")
+    ) {
+        return;
+    }
+
+    // 只快取 GET 請求，POST 等方法無法被 Cache API 支持
+    if (event.request.method !== "GET") {
+        return;
+    }
+
     event.respondWith(
         fetch(event.request)
             .then((response) => {
                 // 網路請求成功 → 更新快取
                 return caches.open(CACHE_NAME).then((cache) => {
+                    // console.log("cache", cache);
                     cache.put(event.request, response.clone());
                     return response;
                 });
@@ -38,7 +52,7 @@ self.addEventListener("fetch", (event) => {
             .catch(() => {
                 // 網路失敗 → 嘗試從快取取資料
                 return caches.match(event.request);
-            })
+            }),
     );
 });
 
@@ -53,9 +67,9 @@ self.addEventListener("activate", (event) => {
                         // 刪除舊版本快取
                         return caches.delete(cacheName);
                     }
-                })
-            )
-        )
+                }),
+            ),
+        ),
     );
     self.clients.claim();
 });
