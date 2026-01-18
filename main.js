@@ -735,9 +735,9 @@ Promise.all([
             checkDrop,
         ]) => {
             // --- 資料前處理 ---
-
+            const userDefaultArea = JSON.parse(localStorage.getItem("area"));
             spawnMap = {};
-            area = areaData;
+            area = userDefaultArea || areaData;
             aliasMap = alias;
             checkMonsterDrop = checkDrop;
 
@@ -1010,14 +1010,45 @@ function selectDefaultRegions() {
     );
     selectedRegions.clear();
 
+    Promise.all([fetch("area.json").then((res) => res.json())])
+        .then(([areaDefaultData]) => {
+            checkboxes.forEach((checkbox) => {
+                const region = checkbox.value;
+                const isDefaultRegion = areaDefaultData[region] === 1;
+                checkbox.checked = isDefaultRegion;
+                if (isDefaultRegion) {
+                    selectedRegions.add(region);
+                }
+            });
+            localStorage.setItem("area", JSON.stringify(areaDefaultData));
+        })
+        .catch((error) => {
+            // 如果資料載入失敗，顯示錯誤訊息
+            document.getElementById("drop-container").innerText =
+                "載入失敗：" + error;
+        });
+
+    refresh();
+}
+
+// 儲存目前選取的區域為預設值
+function saveDefaultRegions() {
+    const checkboxes = document.querySelectorAll(
+        '#region-checkboxes input[type="checkbox"]'
+    );
+    const newArea = {};
+
     checkboxes.forEach((checkbox) => {
         const region = checkbox.value;
-        const isDefaultRegion = area[region] === 1;
-        checkbox.checked = isDefaultRegion;
-        if (isDefaultRegion) {
-            selectedRegions.add(region);
-        }
+        newArea[region] = checkbox.checked ? 1 : 0;
     });
+
+    // 儲存到 localStorage
+    localStorage.setItem("area", JSON.stringify(newArea));
+
+    alert(
+        "請注意！！ 已儲存目前選取的區域為預設值！ 如需返回預設值，請點擊「區域選擇」面板中的「選擇已開放區域」按鈕。"
+    );
 
     refresh();
 }
