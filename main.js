@@ -674,13 +674,13 @@ function refresh(writeHistory = true) {
         const safeKeyword = keyword.trim().replace(
             /[<>&"']/g,
             (c) =>
-                ({
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    "&": "&amp;",
-                    '"': "&quot;",
-                    "'": "&#39;",
-                }[c] || c)
+            ({
+                "<": "&lt;",
+                ">": "&gt;",
+                "&": "&amp;",
+                '"': "&quot;",
+                "'": "&#39;",
+            }[c] || c)
         );
         const record = {
             type,
